@@ -1,0 +1,7 @@
+# Python 3.10.11
+
+openai==1.13.3
+streamlit==1.32.0
+audio_recorder_streamlit
+streamlit-float
+python-dotenv
