@@ -6,3 +6,6 @@ audio_recorder_streamlit
 streamlit-float
 python-dotenv
 langchain==0.1.16
+chromadb
+tiktoken
+pypdf==4.2.0
