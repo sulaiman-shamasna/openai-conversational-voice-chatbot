@@ -5,3 +5,4 @@ streamlit==1.32.0
 audio_recorder_streamlit
 streamlit-float
 python-dotenv
+langchain==0.1.16
