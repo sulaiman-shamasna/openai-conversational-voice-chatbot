@@ -1,5 +1,6 @@
 import os
 from glob import glob
+import subprocess
 
 import openai
 from openai import OpenAI
@@ -94,3 +95,8 @@ def with_pdf_chatbot():
     return result['result']
 
 
+# def launch_streamlit_app():
+#     subprocess.run(["streamlit", "run", "app.py"])
+
+# if __name__ == '__main__':
+#     launch_streamlit_app()
