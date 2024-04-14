@@ -3,9 +3,11 @@
 
 import streamlit as st
 import hmac
+import subprocess
 
 import os
-from helpers import get_answer, text_to_speech, autoplay_audio, speech_to_text
+from helpers import text_to_speech, autoplay_audio, speech_to_text
+from generate_answer import base_model
 from audio_recorder_streamlit import audio_recorder
 from streamlit_float import *
 
@@ -32,7 +34,7 @@ def check_password():
             st.secrets.passwords[st.session_state["username"]],
         ):
             st.session_state["password_correct"] = True
-            del st.session_state["password"]  # Don't store the username or password.
+            del st.session_state["password"]  
             del st.session_state["username"]
         else:
             st.session_state["password_correct"] = False
@@ -86,16 +88,23 @@ if audio_bytes:
                 st.write(transcript)
             os.remove(webm_file_path)
 
-if st.session_state.messages[-1]["role"] != "assistant":
-    with st.chat_message("assistant"):
-        with st.spinner("Thinking🤔..."):
-            final_response = get_answer(st.session_state.messages)
-        with st.spinner("Generating audio response..."):
-            audio_file = text_to_speech(final_response)
-            autoplay_audio(audio_file)
-        st.write(final_response)
-        st.session_state.messages.append({"role": "assistant", "content": final_response})
-        os.remove(audio_file)
+
 
 # Float the footer container and provide CSS to target it with
-footer_container.float("bottom: 0rem;")
+# footer_container.float("bottom: 0rem;")
+
+def launch_streamlit_app():
+    if st.session_state.messages[-1]["role"] != "assistant":
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking🤔..."):
+                final_response = base_model(st.session_state.messages)
+            with st.spinner("Generating audio response..."):
+                audio_file = text_to_speech(final_response)
+                autoplay_audio(audio_file)
+            st.write(final_response)
+            st.session_state.messages.append({"role": "assistant", "content": final_response})
+            os.remove(audio_file)
+        subprocess.run(["streamlit", "run", "app.py"])
+
+if __name__ == '__main__':
+    launch_streamlit_app()
