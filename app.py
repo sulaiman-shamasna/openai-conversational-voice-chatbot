@@ -3,10 +3,11 @@
 
 import streamlit as st
 import hmac
+# import argparse
 
 import os
 from helpers import text_to_speech, autoplay_audio, speech_to_text
-from generate_answer import base_model
+from generate_answer import base_model_chatbot, with_pdf_chatbot
 from audio_recorder_streamlit import audio_recorder
 from streamlit_float import *
 
@@ -92,9 +93,10 @@ def main(answer_mode: str):
         with st.chat_message("assistant"):
             with st.spinner("Thinking🤔..."):
                 if answer_mode == 'base_model':
-                    final_response = base_model(st.session_state.messages)
+                    final_response = base_model_chatbot(st.session_state.messages)
                 elif answer_mode == 'pdf_chat':
-                    final_response = 'Sorry, complete implementation!'
+                    print('--------->', st.session_state.messages)
+                    final_response = with_pdf_chatbot(st.session_state.messages)
             with st.spinner("Generating audio response..."):
                 audio_file = text_to_speech(final_response)
                 autoplay_audio(audio_file)
@@ -104,6 +106,13 @@ def main(answer_mode: str):
 
     # Float the footer container and provide CSS to target it with
     footer_container.float("bottom: 0rem;")
-
+ 
 if __name__ == "__main__":
-    main(answer_mode='pdf_chat')
+    # parser = argparse.ArgumentParser(description="Run OpenAI Conversational Chatbot")
+    # parser.add_argument('--answer_mode', type=str, default='base_model',
+    #                     choices=['base_model', 'pdf_chat'],
+    #                     help="Specify the answer mode ('base_model' or 'pdf_chat')")
+
+    # args = parser.parse_args()
+
+    main(answer_mode='base_model') # Or: answer_mode='base_model'
