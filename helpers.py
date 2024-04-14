@@ -1,30 +1,19 @@
 # https://blog.futuresmart.ai/building-a-conversational-voice-chatbot-integrating-openais-speech-to-text-text-to-speech
 # Reference: See above
 
-import os
 import base64
+import streamlit as st
+
+import os
 import openai
 from openai import OpenAI
 from dotenv import load_dotenv
-import streamlit as st
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
 client = OpenAI(api_key=api_key)
 openai.api_key = api_key
-
-
-def get_answer(messages):
-    system_message = [
-        {"role": "system", "content": "You are an helpful AI chatbot, that answers questions asked by User."}]
-    messages = system_message + messages
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
-        messages=messages
-    )
-    return response.choices[0].message.content
-
 
 def speech_to_text(audio_data):
     with open(audio_data, "rb") as audio_file:
