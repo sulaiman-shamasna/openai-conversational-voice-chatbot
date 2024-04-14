@@ -1,6 +1,6 @@
 import os
 from glob import glob
-import subprocess
+# import subprocess
 
 import openai
 from openai import OpenAI
@@ -23,7 +23,7 @@ client = OpenAI(api_key=api_key)
 openai.api_key = api_key
 
 
-def base_model(messages):
+def base_model_chatbot(messages):
     system_message = [
         {"role": "system", "content": "You are an helpful AI chatbot, that answers questions asked by User."}]
     messages = system_message + messages
@@ -63,9 +63,7 @@ class ConversationalRetrievalChain:
         self.model_name = model_name
         self.temperature = temperature
       
-    def create_chain(self, data_format:str,
-                     url:str,
-                     ):
+    def create_chain(self):
 
         model = ChatOpenAI(model_name=self.model_name,
                            temperature=self.temperature,
@@ -75,11 +73,9 @@ class ConversationalRetrievalChain:
             memory_key="chat_history",
             return_messages=True
             )
-        vector_db = VectorDB(data_format=data_format,
-                             url=url,
-                             )
+        vector_db = VectorDB('docs/')
         retriever = vector_db.create_vector_db().as_retriever(search_type="similarity",
-                                                              search_kwargs={"k": 5},
+                                                              search_kwargs={"k": 2},
                                                               )
         return RetrievalQA.from_chain_type(
             llm=model,
@@ -87,16 +83,11 @@ class ConversationalRetrievalChain:
             memory=memory,
             )
     
-def with_pdf_chatbot():
+def with_pdf_chatbot(messages):
     """Main function to execute the QA system."""
-    query = input('\n Q: ')
+    query = messages[-1]['content'].strip()
+
+
     qa_chain = ConversationalRetrievalChain().create_chain()
     result = qa_chain({"query": query})
     return result['result']
-
-
-# def launch_streamlit_app():
-#     subprocess.run(["streamlit", "run", "app.py"])
-
-# if __name__ == '__main__':
-#     launch_streamlit_app()
